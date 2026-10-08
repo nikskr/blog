@@ -1,22 +1,24 @@
 import { createPost } from "@/actions/actions";
 import RecentlyViewedPosts from "@/components/recently-viewed-posts";
 import UpvoteBtn from "@/components/upvote-btn";
-import { getPosts } from "@/lib/utils";
+import { fetchAllPosts, getPosts } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 
 type PostType = {
   id: number;
   title: string;
-  body: string;
+  body: string | null;
+  authorId: number | null;
+  createdAt: string;
+  updatedAt: string;
   votes: number;
 };
 
-export default async function PostsPage() {
-  // const posts = await prisma.post.findMany();
-  // const cookiesStore = cookies();
-  const posts = await getPosts();
 
+
+export default async function PostsPage() {
+  const posts = await fetchAllPosts();
   return (
     <div className="space-y-8">
       <section className="space-y-4">
@@ -58,14 +60,14 @@ export default async function PostsPage() {
           <label className="block space-y-2">
             <span className="text-sm font-meduim text-zinc-700">Content</span>
             <textarea
-              name="content"
+              name="body"
               required
               className="h-10 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 text-zinc-950 transition-colors focus:border-zinc-500"
             />
           </label>
           <button
             type="submit"
-            className="p-3 bg-zinc-950 text-zinc-0 rounded-md"
+            className="p-3 bg-zinc-950 text-zinc-100 rounded-md"
           >
             Create
           </button>

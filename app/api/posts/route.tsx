@@ -1,17 +1,17 @@
+import { db } from "@/src/prisma/db";
+
 export async function GET() {
-  const posts = await prisma.post.findMany();
+  const posts = await db.orm.public.Post.all();
 
   return Response.json({ posts });
 }
 
 export async function POST(request: Request) {
-  const { title, content } = await request.json();
+  const { title, body } = await request.json();
 
-  const post = await prisma.post.create({
-    data: {
-      title,
-      content,
-    },
+  const post = await db.orm.public.Post.create({
+    title,
+    body,
   });
 
   return Response.json({ post });

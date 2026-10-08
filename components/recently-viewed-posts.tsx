@@ -1,11 +1,23 @@
 import { cookies } from "next/headers";
 
-export default function RecentlyViewedPosts() {
-  const cookiesStore = cookies();
+export default async function RecentlyViewedPosts() {
+  const cookiesStore = await cookies();
+  const recentlyViewedPosts = cookiesStore.get("recentlyViewedPosts");
   return (
     <div>
       <h2>Recently Viewed Posts</h2>
-      <ul></ul>
+      <ul>
+        {
+          recentlyViewedPosts ? (
+            JSON.parse(recentlyViewedPosts.value).map(
+              (post: { id: number, title: string }) => (
+                <li key={post.id}>{post.title}</li>
+              )
+            )) : (
+            <p>No recently viewed posts</p>
+          )
+        }
+      </ul>
     </div>
   );
 }

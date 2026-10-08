@@ -1,45 +1,40 @@
 "use server";
 
-import { revalidatePath, updateTag } from "next/cache";
+import { db } from "@/src/prisma/db";
+import { revalidatePath, revalidateTag, updateTag } from "next/cache";
 
 export async function createPost(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const content = String(formData.get("content") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
 
-  await prisma.post.create({
-    data: {
-      title,
-      content,
-    },
+  await db.orm.public.Post.create({
+    title,
+    body,
   });
 
   // revalidatePath("/posts");
+  // revalidateTag('posts');
   updateTag("posts");
 }
 
 export async function deletePost(id: number) {
-  await prisma.post.delete({
-    where: {
-      id,
-    },
-  });
+  await db.orm.public.Post.where({ id }).delete();
 }
 
 export async function updatePost(id: number, formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const content = String(formData.get("content") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
 
-  await prisma.post.update({
-    where: {
-      id,
-    },
-    data: {
-      title,
-      content,
-    },
+  await db.orm.public.Post.where({
+    id,
+  }).update({
+    title,
+    body,
   });
 }
 
-export async function upvotePost(id: number) {
-  //upvote logic
+export async function upvotePost(id: number, votes: number) {
+  await db.orm.public.Post.where({ id }).update({ votes })
+  revalidatePath('/posts');
+  revalidatePath(`/posts/${id}`);
 }

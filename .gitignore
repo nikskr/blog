@@ -49,3 +49,5 @@ dist/
 .cursor
 .devin
 .gitattributes
+
+.editorconfig
